@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Gloomboomers</title>
+</head>
+<body>
+<h1>Gloomboomers Party Tracker</h1>
+<p>Sidan är på väg!</p>
+</body>
+</html>

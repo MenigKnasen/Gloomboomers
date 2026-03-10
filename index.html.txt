@@ -2,10 +2,133 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Gloomboomers</title>
+<title>Gloomboomers Party Tracker</title>
+
+<style>
+body{
+font-family:Arial;
+background:#1e1e1e;
+color:white;
+padding:40px;
+}
+
+.card{
+background:#2c2c2c;
+padding:20px;
+margin-bottom:20px;
+border-radius:10px;
+max-width:500px;
+}
+
+input{
+padding:6px;
+margin-top:5px;
+margin-bottom:10px;
+width:100%;
+}
+
+button{
+padding:8px 14px;
+background:#4CAF50;
+border:none;
+color:white;
+border-radius:6px;
+cursor:pointer;
+}
+
+</style>
 </head>
+
 <body>
-<h1>Gloomboomers Party Tracker</h1>
-<p>Sidan är på väg!</p>
+
+<h1>⚔️ Gloomboomers Party Tracker</h1>
+
+<div class="card">
+
+<h2>Party</h2>
+
+Prosperity  
+<input id="prosperity">
+
+Reputation  
+<input id="reputation">
+
+<button onclick="save()">Save</button>
+
+</div>
+
+<div class="card">
+
+<h2>Character</h2>
+
+Name  
+<input id="name">
+
+XP  
+<input id="xp">
+
+Gold  
+<input id="gold">
+
+Level  
+<input id="level" disabled>
+
+<button onclick="save()">Save</button>
+
+</div>
+
+<script>
+
+function levelFromXP(xp){
+
+if(xp>=500)return 9
+if(xp>=420)return 8
+if(xp>=345)return 7
+if(xp>=275)return 6
+if(xp>=210)return 5
+if(xp>=150)return 4
+if(xp>=95)return 3
+if(xp>=45)return 2
+
+return 1
+}
+
+function save(){
+
+let xp=parseInt(document.getElementById("xp").value||0)
+
+document.getElementById("level").value=levelFromXP(xp)
+
+let data={
+name:document.getElementById("name").value,
+xp:xp,
+gold:document.getElementById("gold").value,
+level:document.getElementById("level").value,
+prosperity:document.getElementById("prosperity").value,
+reputation:document.getElementById("reputation").value
+}
+
+localStorage.setItem("gloomboomers",JSON.stringify(data))
+
+}
+
+function load(){
+
+let data=JSON.parse(localStorage.getItem("gloomboomers")||"{}")
+
+for(let k in data){
+
+let el=document.getElementById(k)
+
+if(el)el.value=data[k]
+
+}
+
+}
+
+load()
+
+</script>
+
 </body>
 </html>

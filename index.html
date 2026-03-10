@@ -1,134 +1,1330 @@
 <!DOCTYPE html>
-<html>
+<html lang="sv">
 <head>
-<meta charset="UTF-8">
-<title>Gloomboomers Party Tracker</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gloomboomers Party Tracker</title>
+  <style>
+    :root {
+      --bg: #121316;
+      --panel: #1c1f24;
+      --panel-2: #232831;
+      --text: #f3f4f6;
+      --muted: #a7afbf;
+      --line: #323846;
+      --accent: #5ac46b;
+      --accent-2: #7ce08c;
+      --danger: #d96b6b;
+      --warn: #d3a84d;
+      --shadow: 0 12px 32px rgba(0,0,0,.28);
+      --radius: 16px;
+    }
 
-<style>
-body{
-font-family:Arial;
-background:#1e1e1e;
-color:white;
-padding:40px;
-}
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: Inter, Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #111317 0%, #151922 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
 
-.card{
-background:#2c2c2c;
-padding:20px;
-margin-bottom:20px;
-border-radius:10px;
-max-width:500px;
-}
+    .wrap {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px;
+    }
 
-input{
-padding:6px;
-margin-top:5px;
-margin-bottom:10px;
-width:100%;
-}
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
 
-button{
-padding:8px 14px;
-background:#4CAF50;
-border:none;
-color:white;
-border-radius:6px;
-cursor:pointer;
-}
+    .title h1 {
+      margin: 0;
+      font-size: 2.2rem;
+      line-height: 1.1;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-</style>
+    .title p {
+      margin: 10px 0 0;
+      color: var(--muted);
+      max-width: 880px;
+      line-height: 1.5;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    button, .button-like {
+      border: 0;
+      background: var(--accent);
+      color: #08110b;
+      font-weight: 700;
+      padding: 11px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform .05s ease, opacity .2s ease, background .2s ease;
+    }
+
+    button:hover, .button-like:hover { opacity: .94; }
+    button:active, .button-like:active { transform: translateY(1px); }
+    button.secondary {
+      background: var(--panel-2);
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+    button.warn { background: var(--warn); color: #181205; }
+    button.danger { background: var(--danger); color: white; }
+
+    .card {
+      background: rgba(28,31,36,.96);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .party-code-card, .stats-card {
+      padding: 16px;
+    }
+
+    .party-code-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr auto;
+      gap: 14px;
+      align-items: end;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+    }
+
+    .stat {
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: .88rem;
+      margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-size: 1.55rem;
+      font-weight: 800;
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .side-col, .main-col {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .section-head {
+      padding: 16px 16px 0;
+      font-size: 1.2rem;
+      font-weight: 800;
+    }
+
+    .section-body {
+      padding: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--text);
+      font-weight: 600;
+      font-size: .95rem;
+    }
+
+    .help {
+      color: var(--muted);
+      font-size: .83rem;
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #11151c;
+      color: var(--text);
+      border-radius: 12px;
+      padding: 11px 12px;
+      font: inherit;
+    }
+
+    input[readonly] {
+      opacity: .9;
+      background: #171b22;
+    }
+
+    textarea { min-height: 120px; resize: vertical; }
+
+    .field-grid-2, .field-grid-3, .field-grid-4 {
+      display: grid;
+      gap: 12px;
+    }
+    .field-grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .field-grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .field-grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+    .character-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 650px;
+      overflow: auto;
+    }
+
+    .character-item {
+      width: 100%;
+      text-align: left;
+      background: var(--panel-2);
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      cursor: pointer;
+    }
+
+    .character-item.active {
+      border-color: var(--accent-2);
+      box-shadow: 0 0 0 1px rgba(124,224,140,.35) inset;
+    }
+
+    .item-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .item-name {
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .item-sub {
+      color: var(--muted);
+      font-size: .88rem;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--line);
+      background: #171b22;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: .8rem;
+      color: var(--text);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      padding: 12px;
+      border-bottom: 1px solid var(--line);
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      background: var(--panel-2);
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 700;
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: #08110b;
+      border-color: transparent;
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .progress-wrap {
+      margin-top: 8px;
+    }
+
+    .progress-line {
+      height: 12px;
+      background: #0f1318;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    }
+
+    .list-block {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .list-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .perk-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 10px;
+      align-items: center;
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      border-radius: 12px;
+      padding: 10px 12px;
+    }
+
+    .slot-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .small-items-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .achievements-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .class-pill-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .class-pill {
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      padding: 8px 12px;
+      background: var(--panel-2);
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .class-pill.active {
+      background: var(--accent);
+      color: #08110b;
+      border-color: transparent;
+    }
+
+    .message {
+      margin: 6px 0 0;
+      color: var(--muted);
+      min-height: 20px;
+    }
+
+    .switch-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .empty {
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    @media (max-width: 1180px) {
+      .hero-grid,
+      .main-grid,
+      .party-code-grid,
+      .achievements-grid,
+      .slot-grid,
+      .small-items-grid,
+      .field-grid-4,
+      .field-grid-3 { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 760px) {
+      .wrap { padding: 16px; }
+      .stats-grid,
+      .field-grid-2 { grid-template-columns: 1fr; }
+      .title h1 { font-size: 1.8rem; }
+      .btn-row { width: 100%; }
+      .btn-row button { flex: 1 1 auto; }
+    }
+  </style>
 </head>
-
 <body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="title">
+        <h1>⚔️ Gloomboomers Party Tracker</h1>
+        <p>
+          En riktig version för ert party: karaktärer, XP som höjer level automatiskt, items, perks,
+          party achievements, prosperity, reputation, unlocked classes, mobilvy och autosave.
+        </p>
+      </div>
+      <div class="btn-row">
+        <button class="secondary" id="btnNewParty">Nytt party</button>
+        <button class="secondary" id="btnExport">Export</button>
+        <button class="secondary" id="btnImport">Import</button>
+        <button id="btnSaveNow">Spara nu</button>
+      </div>
+    </div>
 
-<h1>⚔️ Gloomboomers Party Tracker</h1>
+    <div class="hero-grid">
+      <div class="card party-code-card">
+        <div class="party-code-grid">
+          <div>
+            <label for="partyCodeInput">Party code</label>
+            <input id="partyCodeInput" />
+            <div class="help">Dela koden eller exporten med vännerna. Den här gratisversionen sparar lokalt i varje webbläsare.</div>
+          </div>
+          <div>
+            <label for="playerNameFinder">Mitt spelarnamn</label>
+            <input id="playerNameFinder" placeholder="t.ex. Kalle" />
+            <div class="help">Används för att snabbt hoppa till rätt figur.</div>
+          </div>
+          <div class="btn-row">
+            <button class="secondary" id="btnFindPlayer">Min figur</button>
+            <button class="secondary" id="btnCopyState">Kopiera data</button>
+          </div>
+        </div>
+      </div>
 
-<div class="card">
+      <div class="card stats-card">
+        <div class="stats-grid">
+          <div class="stat"><div class="stat-label">Aktiva karaktärer</div><div class="stat-value" id="statActive">0</div></div>
+          <div class="stat"><div class="stat-label">Totalt guld</div><div class="stat-value" id="statGold">0</div></div>
+          <div class="stat"><div class="stat-label">Total XP</div><div class="stat-value" id="statXP">0</div></div>
+          <div class="stat"><div class="stat-label">Snittnivå</div><div class="stat-value" id="statAvg">0.0</div></div>
+          <div class="stat"><div class="stat-label">Scenario level</div><div class="stat-value" id="statScenario">1</div></div>
+        </div>
+      </div>
+    </div>
 
-<h2>Party</h2>
+    <div class="message" id="message"></div>
 
-Prosperity  
-<input id="prosperity">
+    <div class="main-grid">
+      <div class="side-col">
+        <div class="card">
+          <div class="section-head">Lägg till karaktär</div>
+          <div class="section-body">
+            <div class="field-grid-2">
+              <div>
+                <label for="newPlayerName">Spelare</label>
+                <input id="newPlayerName" placeholder="t.ex. Anders" />
+              </div>
+              <div>
+                <label for="newCharacterClass">Klass</label>
+                <select id="newCharacterClass"></select>
+              </div>
+            </div>
+            <div style="margin-top:12px">
+              <button id="btnAddCharacter">Lägg till karaktär</button>
+            </div>
+            <div class="help">Alla Gloomhaven-klasser finns inlagda med hand size, HP per nivå, roll och klassdrag.</div>
+          </div>
+        </div>
 
-Reputation  
-<input id="reputation">
+        <div class="card">
+          <div class="section-head">Karaktärer</div>
+          <div class="section-body">
+            <div>
+              <label for="characterFilter">Filtrera spelare</label>
+              <select id="characterFilter"></select>
+            </div>
+            <div class="character-list" id="characterList" style="margin-top:12px"></div>
+          </div>
+        </div>
+      </div>
 
-<button onclick="save()">Save</button>
+      <div class="main-col">
+        <div class="card">
+          <div class="tabs">
+            <button class="tab-btn active" data-tab="character">Karaktär</button>
+            <button class="tab-btn" data-tab="items">Items</button>
+            <button class="tab-btn" data-tab="party">Party</button>
+            <button class="tab-btn" data-tab="sharing">Delning</button>
+          </div>
 
-</div>
+          <div class="tab-panel active" id="tab-character">
+            <div class="section-body" id="characterPanel"></div>
+          </div>
 
-<div class="card">
+          <div class="tab-panel" id="tab-items">
+            <div class="section-body" id="itemsPanel"></div>
+          </div>
 
-<h2>Character</h2>
+          <div class="tab-panel" id="tab-party">
+            <div class="section-body" id="partyPanel"></div>
+          </div>
 
-Name  
-<input id="name">
+          <div class="tab-panel" id="tab-sharing">
+            <div class="section-body" id="sharingPanel"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-XP  
-<input id="xp">
+  <script>
+    const STORAGE_KEY = "gloomboomers-tracker-v1";
 
-Gold  
-<input id="gold">
+    const levelXpThresholds = {
+      1: 0,
+      2: 45,
+      3: 95,
+      4: 150,
+      5: 210,
+      6: 275,
+      7: 345,
+      8: 420,
+      9: 500,
+    };
 
-Level  
-<input id="level" disabled>
+    const CLASS_LIBRARY = [
+      { key: "brute", safeName: "Brute", handSize: 10, hpByLevel: [10,12,14,16,18,20,22,24,26], role: "Frontlinje / tank", traits: ["Push","Shield","Retaliate","Närstrid"], complexity: "Låg" },
+      { key: "scoundrel", safeName: "Scoundrel", handSize: 9, hpByLevel: [8,9,11,12,14,15,17,18,20], role: "Burst / mobil närstrid", traits: ["Adjacency","Loot","Pierce","Initiativspel"], complexity: "Medel" },
+      { key: "cragheart", safeName: "Cragheart", handSize: 11, hpByLevel: [10,12,14,16,18,20,22,24,26], role: "Kontroll / hybrid", traits: ["Obstacle","Splash-skada","True damage","Räckvidd + melee"], complexity: "Medel" },
+      { key: "tinkerer", safeName: "Tinkerer", handSize: 12, hpByLevel: [8,9,11,12,14,15,17,18,20], role: "Support / ranged utility", traits: ["Heal","Trap","Recover","AOE"], complexity: "Medel" },
+      { key: "spellweaver", safeName: "Spellweaver", handSize: 8, hpByLevel: [6,7,8,9,11,12,13,15,16], role: "Ranged burst / element", traits: ["Elements","AOE","Loss-kort","Recover cards"], complexity: "Hög" },
+      { key: "mindthief", safeName: "Mindthief", handSize: 10, hpByLevel: [6,7,8,9,11,12,13,15,16], role: "Kontroll / skada", traits: ["Augments","Stun","Melee control","Summon-råtta"], complexity: "Hög" },
+      { key: "sun", safeName: "Sun", handSize: 10, hpByLevel: [10,12,14,16,18,20,22,24,26], role: "Tank / support", traits: ["Light","Shield","Retaliate","Support"], complexity: "Medel" },
+      { key: "circles", safeName: "Circles", handSize: 9, hpByLevel: [6,7,8,9,11,12,13,15,16], role: "Summons / positioning", traits: ["Summons","Board control","Command","Action economy"], complexity: "Hög" },
+      { key: "eclipse", safeName: "Eclipse", handSize: 9, hpByLevel: [8,9,11,12,14,15,17,18,20], role: "Assassin / stealth", traits: ["Dark","Invisible","Execute","Burst"], complexity: "Hög" },
+      { key: "music-note", safeName: "Music Note", handSize: 9, hpByLevel: [5,6,7,8,9,11,12,14,15], role: "Support / crowd control", traits: ["Songs","Disarm","Curse","Team buffs"], complexity: "Hög" },
+      { key: "angry-face", safeName: "Angry Face", handSize: 12, hpByLevel: [8,9,11,12,14,15,17,18,20], role: "Ranged hunter", traits: ["Doom","Single target","Ranged","Setup"], complexity: "Medel" },
+      { key: "three-spears", safeName: "Three Spears", handSize: 9, hpByLevel: [8,9,11,12,14,15,17,18,20], role: "Items / support / bruiser", traits: ["Refresh items","Utility","Tankig","Flex"], complexity: "Hög" },
+      { key: "saw", safeName: "Saw", handSize: 10, hpByLevel: [8,9,11,12,14,15,17,18,20], role: "Support / melee utility", traits: ["Heal","Med packs","Conditions","Melee"], complexity: "Medel" },
+      { key: "lightning", safeName: "Lightning Bolt", handSize: 10, hpByLevel: [8,9,11,12,14,15,17,18,20], role: "Risk/reward damage", traits: ["Self damage","Burst","Retaliate","Finish"], complexity: "Medel" },
+      { key: "triangles", safeName: "Triangles", handSize: 10, hpByLevel: [5,6,7,8,9,11,12,14,15], role: "Element-engine / ranged", traits: ["Elements","Setup","AOE","Consumption chains"], complexity: "Hög" },
+      { key: "cthulhu", safeName: "Cthulhu", handSize: 11, hpByLevel: [6,7,8,9,11,12,13,15,16], role: "Curses / poison / ranged", traits: ["Curse","Poison","AOE chip","Debuffs"], complexity: "Medel" },
+      { key: "two-mini", safeName: "Two Minis", handSize: 10, hpByLevel: [6,7,8,9,11,12,13,15,16], role: "Companion control", traits: ["Bear companion","Command","Positioning","Split roles"], complexity: "Hög" },
+    ];
 
-<button onclick="save()">Save</button>
+    function uid() {
+      return Math.random().toString(36).slice(2) + Date.now().toString(36);
+    }
 
-</div>
+    function createPartyCode() {
+      return "GH-" + Math.random().toString(36).slice(2,6).toUpperCase() + "-" + Math.random().toString(36).slice(2,6).toUpperCase();
+    }
 
-<script>
+    function getClassTemplate(classKey) {
+      return CLASS_LIBRARY.find(c => c.key === classKey) || CLASS_LIBRARY[0];
+    }
 
-function levelFromXP(xp){
+    function computeSuggestedLevel(xp) {
+      let result = 1;
+      Object.entries(levelXpThresholds).forEach(([lvl, threshold]) => {
+        if (Number(xp || 0) >= threshold) result = Number(lvl);
+      });
+      return result;
+    }
 
-if(xp>=500)return 9
-if(xp>=420)return 8
-if(xp>=345)return 7
-if(xp>=275)return 6
-if(xp>=210)return 5
-if(xp>=150)return 4
-if(xp>=95)return 3
-if(xp>=45)return 2
+    function getNextLevelXp(level) {
+      return levelXpThresholds[Math.min(9, Number(level || 1) + 1)] || 500;
+    }
 
-return 1
-}
+    function getHpForLevel(classKey, level) {
+      const template = getClassTemplate(classKey);
+      return template.hpByLevel[Math.max(1, Math.min(9, Number(level || 1))) - 1];
+    }
 
-function save(){
+    function createCharacter(classKey, playerName = "") {
+      const template = getClassTemplate(classKey);
+      return {
+        id: uid(),
+        playerName,
+        classKey: template.key,
+        name: template.safeName,
+        customName: "",
+        xp: 0,
+        level: 1,
+        hp: template.hpByLevel[0],
+        maxHp: template.hpByLevel[0],
+        gold: 0,
+        checkmarks: 0,
+        battleGoalsDone: 0,
+        handSize: template.handSize,
+        retired: false,
+        role: template.role,
+        complexity: template.complexity,
+        traits: [...template.traits],
+        itemSlots: {
+          head: "",
+          body: "",
+          legs: "",
+          hand1: "",
+          hand2: "",
+          small: [""]
+        },
+        smallItemLimit: 1,
+        inventory: [],
+        perks: [],
+        notes: "",
+      };
+    }
 
-let xp=parseInt(document.getElementById("xp").value||0)
+    function createDefaultState() {
+      const brute = createCharacter("brute", "Spelare 1");
+      brute.customName = "Frontlinje";
+      brute.xp = 18;
+      brute.gold = 22;
+      brute.perks = [{ id: uid(), text: "Remove two -1 cards", done: false }];
 
-document.getElementById("level").value=levelFromXP(xp)
+      const spellweaver = createCharacter("spellweaver", "Spelare 2");
+      spellweaver.customName = "Caster";
+      spellweaver.xp = 24;
+      spellweaver.gold = 31;
 
-let data={
-name:document.getElementById("name").value,
-xp:xp,
-gold:document.getElementById("gold").value,
-level:document.getElementById("level").value,
-prosperity:document.getElementById("prosperity").value,
-reputation:document.getElementById("reputation").value
-}
+      return {
+        meta: {
+          partyCode: createPartyCode(),
+          updatedAt: new Date().toISOString(),
+        },
+        party: {
+          name: "Gloomboomers",
+          prosperity: 1,
+          reputation: 0,
+          donations: 0,
+          notes: "",
+          globalAchievements: [""],
+          partyAchievements: [""],
+          unlockedClasses: CLASS_LIBRARY.map(c => c.safeName),
+        },
+        characters: [brute, spellweaver],
+        activeCharacterId: brute.id,
+        filterPlayer: "all",
+      };
+    }
 
-localStorage.setItem("gloomboomers",JSON.stringify(data))
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return createDefaultState();
+        return JSON.parse(raw);
+      } catch {
+        return createDefaultState();
+      }
+    }
 
-}
+    let state = loadState();
 
-function load(){
+    function saveState(message) {
+      state.meta.updatedAt = new Date().toISOString();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      setMessage(message || "Sparat.");
+    }
 
-let data=JSON.parse(localStorage.getItem("gloomboomers")||"{}")
+    function setMessage(text) {
+      document.getElementById("message").textContent = text || "";
+      clearTimeout(setMessage._t);
+      setMessage._t = setTimeout(() => {
+        document.getElementById("message").textContent = "";
+      }, 2400);
+    }
 
-for(let k in data){
+    function getActiveCharacter() {
+      return state.characters.find(c => c.id === state.activeCharacterId) || state.characters[0] || null;
+    }
 
-let el=document.getElementById(k)
+    function visibleCharacters() {
+      if (state.filterPlayer === "all") return state.characters;
+      return state.characters.filter(c => (c.playerName || "").trim() === state.filterPlayer);
+    }
 
-if(el)el.value=data[k]
+    function uniquePlayerNames() {
+      return [...new Set(state.characters.map(c => (c.playerName || "").trim()).filter(Boolean))];
+    }
 
-}
+    function touchCharacter(character) {
+      const autoLevel = computeSuggestedLevel(character.xp);
+      character.level = autoLevel;
+      character.maxHp = getHpForLevel(character.classKey, autoLevel);
+      if (Number(character.hp || 0) > character.maxHp) character.hp = character.maxHp;
+      if (!character.hp || Number(character.hp) < 0) character.hp = character.maxHp;
+      character.handSize = getClassTemplate(character.classKey).handSize;
+      character.role = getClassTemplate(character.classKey).role;
+      character.complexity = getClassTemplate(character.classKey).complexity;
+      character.traits = [...getClassTemplate(character.classKey).traits];
+      return character;
+    }
 
-}
+    function computeStats() {
+      const active = state.characters.filter(c => !c.retired);
+      const totalGold = active.reduce((s, c) => s + Number(c.gold || 0), 0);
+      const totalXP = active.reduce((s, c) => s + Number(c.xp || 0), 0);
+      const totalLevels = active.reduce((s, c) => s + Number(c.level || 0), 0);
+      const avgLevel = active.length ? (totalLevels / active.length).toFixed(1) : "0.0";
+      const scenario = active.length ? Math.ceil(totalLevels / active.length / 2) : 1;
+      return {
+        activeCount: active.length,
+        totalGold,
+        totalXP,
+        avgLevel,
+        scenario,
+      };
+    }
 
-load()
+    function render() {
+      state.characters = state.characters.map(c => touchCharacter(c));
+      if (!getActiveCharacter() && state.characters.length) {
+        state.activeCharacterId = state.characters[0].id;
+      }
 
-</script>
+      document.getElementById("partyCodeInput").value = state.meta.partyCode || "";
+      fillClassSelect();
+      fillFilterSelect();
+      renderStats();
+      renderCharacterList();
+      renderCharacterPanel();
+      renderItemsPanel();
+      renderPartyPanel();
+      renderSharingPanel();
+    }
 
+    function fillClassSelect() {
+      const select = document.getElementById("newCharacterClass");
+      if (select.dataset.filled === "1") return;
+      select.innerHTML = CLASS_LIBRARY.map(c => `<option value="${c.key}">${c.safeName} — ${c.role}</option>`).join("");
+      select.dataset.filled = "1";
+    }
+
+    function fillFilterSelect() {
+      const select = document.getElementById("characterFilter");
+      const names = uniquePlayerNames();
+      const options = [`<option value="all">Alla spelare</option>`].concat(names.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`));
+      select.innerHTML = options.join("");
+      select.value = state.filterPlayer || "all";
+    }
+
+    function renderStats() {
+      const stats = computeStats();
+      document.getElementById("statActive").textContent = stats.activeCount;
+      document.getElementById("statGold").textContent = stats.totalGold;
+      document.getElementById("statXP").textContent = stats.totalXP;
+      document.getElementById("statAvg").textContent = stats.avgLevel;
+      document.getElementById("statScenario").textContent = stats.scenario;
+    }
+
+    function renderCharacterList() {
+      const list = document.getElementById("characterList");
+      const chars = visibleCharacters();
+      if (!chars.length) {
+        list.innerHTML = `<div class="empty">Inga karaktärer matchar filtret ännu.</div>`;
+        return;
+      }
+      list.innerHTML = chars.map(c => {
+        const title = c.customName ? `${escapeHtml(c.customName)} (${escapeHtml(c.name)})` : escapeHtml(c.name);
+        return `
+          <button class="character-item ${c.id === state.activeCharacterId ? "active" : ""}" onclick="selectCharacter('${c.id}')">
+            <div class="item-top">
+              <div>
+                <div class="item-name">${title}</div>
+                <div class="item-sub">${escapeHtml(c.playerName || "Ingen spelare vald")} · ${escapeHtml(c.role)}</div>
+              </div>
+              <div class="badge">Lvl ${c.level}</div>
+            </div>
+            <div class="badge-row">
+              <span class="badge">HP ${c.hp}/${c.maxHp}</span>
+              <span class="badge">XP ${c.xp}</span>
+              <span class="badge">${c.gold} g</span>
+              <span class="badge">Checkmarks ${c.checkmarks}</span>
+            </div>
+          </button>
+        `;
+      }).join("");
+    }
+
+    function renderCharacterPanel() {
+      const root = document.getElementById("characterPanel");
+      const c = getActiveCharacter();
+      if (!c) {
+        root.innerHTML = `<div class="empty">Välj eller skapa en karaktär.</div>`;
+        return;
+      }
+
+      const nextXp = getNextLevelXp(c.level);
+      const currentThreshold = levelXpThresholds[c.level] || 0;
+      const xpSpan = Math.max(1, nextXp - currentThreshold);
+      const progress = c.level >= 9 ? 100 : Math.max(0, Math.min(100, ((c.xp - currentThreshold) / xpSpan) * 100));
+      const title = c.customName ? `${escapeHtml(c.customName)} (${escapeHtml(c.name)})` : escapeHtml(c.name);
+
+      root.innerHTML = `
+        <div class="item-top" style="margin-bottom:16px">
+          <div>
+            <div class="section-head" style="padding:0;font-size:1.7rem">${title}</div>
+            <div class="item-sub" style="margin-top:6px">${escapeHtml(c.playerName || "Ingen spelare vald")} · ${escapeHtml(c.name)} · ${escapeHtml(c.role)}</div>
+          </div>
+          <div class="badge-row">
+            <span class="badge">Level ${c.level}</span>
+            <span class="badge">Hand size ${c.handSize}</span>
+            <span class="badge">Max HP ${c.maxHp}</span>
+            <span class="badge">Komplexitet ${escapeHtml(c.complexity)}</span>
+          </div>
+        </div>
+
+        <div class="field-grid-4">
+          <div>
+            <label>Spelare</label>
+            <input value="${escapeAttr(c.playerName || "")}" onchange="updateCharacterField('${c.id}','playerName',this.value)">
+          </div>
+          <div>
+            <label>Visningsnamn</label>
+            <input value="${escapeAttr(c.customName || "")}" onchange="updateCharacterField('${c.id}','customName',this.value)">
+          </div>
+          <div>
+            <label>Klass</label>
+            <select onchange="updateCharacterClass('${c.id}', this.value)">
+              ${CLASS_LIBRARY.map(cls => `<option value="${cls.key}" ${cls.key === c.classKey ? "selected" : ""}>${cls.safeName}</option>`).join("")}
+            </select>
+          </div>
+          <div>
+            <label>Retired</label>
+            <select onchange="updateCharacterField('${c.id}','retired',this.value==='true')">
+              <option value="false" ${!c.retired ? "selected" : ""}>Nej</option>
+              <option value="true" ${c.retired ? "selected" : ""}>Ja</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-grid-4" style="margin-top:12px">
+          <div>
+            <label>HP</label>
+            <input type="number" value="${c.hp}" onchange="updateCharacterNumber('${c.id}','hp',this.value)">
+          </div>
+          <div>
+            <label>XP</label>
+            <input type="number" value="${c.xp}" onchange="updateCharacterNumber('${c.id}','xp',this.value)">
+          </div>
+          <div>
+            <label>Guld</label>
+            <input type="number" value="${c.gold}" onchange="updateCharacterNumber('${c.id}','gold',this.value)">
+          </div>
+          <div>
+            <label>Checkmarks</label>
+            <input type="number" value="${c.checkmarks}" onchange="updateCharacterNumber('${c.id}','checkmarks',this.value)">
+          </div>
+        </div>
+
+        <div class="field-grid-2" style="margin-top:12px">
+          <div>
+            <label>Battle goals klara</label>
+            <input type="number" value="${c.battleGoalsDone}" onchange="updateCharacterNumber('${c.id}','battleGoalsDone',this.value)">
+          </div>
+          <div>
+            <label>Level (auto från XP)</label>
+            <input readonly value="${c.level}">
+          </div>
+        </div>
+
+        <div class="progress-wrap">
+          <div class="item-top">
+            <div class="item-sub">XP mot nästa nivå</div>
+            <div class="item-sub">${c.xp} / ${nextXp}</div>
+          </div>
+          <div class="progress-line"><div class="progress-fill" style="width:${progress}%"></div></div>
+          <div class="help">När XP ändras uppdateras level automatiskt. HP följer klass och level.</div>
+        </div>
+
+        <div style="margin-top:16px">
+          <label>Unika klassdrag</label>
+          <div class="badge-row">
+            ${c.traits.map(t => `<span class="badge">${escapeHtml(t)}</span>`).join("")}
+          </div>
+        </div>
+
+        <div style="margin-top:18px">
+          <label>Perks</label>
+          <div class="list-row">
+            <input id="newPerkInput" placeholder="Lägg till perk manuellt">
+            <button class="secondary" onclick="addPerk('${c.id}')">Lägg till</button>
+          </div>
+          <div class="list-block">
+            ${c.perks.length ? c.perks.map(p => `
+              <div class="perk-row">
+                <input type="checkbox" ${p.done ? "checked" : ""} onchange="togglePerk('${c.id}','${p.id}',this.checked)">
+                <div style="${p.done ? "text-decoration:line-through;opacity:.65" : ""}">${escapeHtml(p.text)}</div>
+                <button class="danger" onclick="removePerk('${c.id}','${p.id}')">Ta bort</button>
+              </div>
+            `).join("") : `<div class="empty">Inga perks ännu.</div>`}
+          </div>
+        </div>
+
+        <div style="margin-top:18px">
+          <label>Anteckningar</label>
+          <textarea onchange="updateCharacterField('${c.id}','notes',this.value)">${escapeHtml(c.notes || "")}</textarea>
+        </div>
+
+        <div class="btn-row" style="margin-top:14px">
+          <button class="secondary" onclick="duplicateCharacter('${c.id}')">Duplicera</button>
+          <button class="danger" onclick="deleteCharacter('${c.id}')">Ta bort</button>
+        </div>
+      `;
+    }
+
+    function renderItemsPanel() {
+      const root = document.getElementById("itemsPanel");
+      const c = getActiveCharacter();
+      if (!c) {
+        root.innerHTML = `<div class="empty">Välj en karaktär först.</div>`;
+        return;
+      }
+
+      root.innerHTML = `
+        <div class="field-grid-3">
+          <div><label>Head</label><input value="${escapeAttr(c.itemSlots.head || "")}" onchange="updateItemSlot('${c.id}','head',this.value)"></div>
+          <div><label>Body</label><input value="${escapeAttr(c.itemSlots.body || "")}" onchange="updateItemSlot('${c.id}','body',this.value)"></div>
+          <div><label>Legs</label><input value="${escapeAttr(c.itemSlots.legs || "")}" onchange="updateItemSlot('${c.id}','legs',this.value)"></div>
+          <div><label>Hand 1</label><input value="${escapeAttr(c.itemSlots.hand1 || "")}" onchange="updateItemSlot('${c.id}','hand1',this.value)"></div>
+          <div><label>Hand 2</label><input value="${escapeAttr(c.itemSlots.hand2 || "")}" onchange="updateItemSlot('${c.id}','hand2',this.value)"></div>
+          <div><label>Små item-slots</label><input type="number" value="${c.smallItemLimit}" onchange="updateSmallItemLimit('${c.id}',this.value)"></div>
+        </div>
+
+        <div class="small-items-grid">
+          ${Array.from({ length: c.smallItemLimit }).map((_, i) => `
+            <div>
+              <label>Small item ${i + 1}</label>
+              <input value="${escapeAttr((c.itemSlots.small || [])[i] || "")}" onchange="updateSmallItemSlot('${c.id}',${i},this.value)">
+            </div>
+          `).join("")}
+        </div>
+
+        <div style="margin-top:18px">
+          <label>Inventory</label>
+          <div class="list-row">
+            <input id="newInventoryItemInput" placeholder="Lägg till item i inventory">
+            <button class="secondary" onclick="addInventoryItem('${c.id}')">Lägg till</button>
+          </div>
+          <div class="list-block">
+            ${c.inventory.length ? c.inventory.map(item => `
+              <div class="list-row">
+                <div class="perk-row" style="grid-template-columns:1fr auto">
+                  <div>${escapeHtml(item.text)}</div>
+                  <button class="danger" onclick="removeInventoryItem('${c.id}','${item.id}')">Ta bort</button>
+                </div>
+              </div>
+            `).join("") : `<div class="empty">Inga items i inventory ännu.</div>`}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderPartyPanel() {
+      const p = state.party;
+      const root = document.getElementById("partyPanel");
+
+      root.innerHTML = `
+        <div class="field-grid-4">
+          <div><label>Partynamn</label><input value="${escapeAttr(p.name || "")}" onchange="updatePartyField('name',this.value)"></div>
+          <div><label>Prosperity</label><input type="number" value="${p.prosperity}" onchange="updatePartyNumber('prosperity',this.value)"></div>
+          <div><label>Reputation</label><input type="number" value="${p.reputation}" onchange="updatePartyNumber('reputation',this.value)"></div>
+          <div><label>Donations</label><input type="number" value="${p.donations}" onchange="updatePartyNumber('donations',this.value)"></div>
+        </div>
+
+        <div class="achievements-grid" style="margin-top:18px">
+          <div>
+            <label>Global achievements</label>
+            <div class="list-block">
+              ${p.globalAchievements.map((entry, i) => `
+                <div class="list-row">
+                  <input value="${escapeAttr(entry)}" onchange="updateAchievement('globalAchievements',${i},this.value)">
+                  <button class="danger" onclick="removeAchievement('globalAchievements',${i})">Ta bort</button>
+                </div>
+              `).join("")}
+            </div>
+            <div style="margin-top:10px"><button class="secondary" onclick="addAchievement('globalAchievements')">Lägg till achievement</button></div>
+          </div>
+
+          <div>
+            <label>Party achievements</label>
+            <div class="list-block">
+              ${p.partyAchievements.map((entry, i) => `
+                <div class="list-row">
+                  <input value="${escapeAttr(entry)}" onchange="updateAchievement('partyAchievements',${i},this.value)">
+                  <button class="danger" onclick="removeAchievement('partyAchievements',${i})">Ta bort</button>
+                </div>
+              `).join("")}
+            </div>
+            <div style="margin-top:10px"><button class="secondary" onclick="addAchievement('partyAchievements')">Lägg till achievement</button></div>
+          </div>
+        </div>
+
+        <div style="margin-top:18px">
+          <label>Unlocked classes</label>
+          <div class="class-pill-grid">
+            ${CLASS_LIBRARY.map(cls => {
+              const active = p.unlockedClasses.includes(cls.safeName);
+              return `<button class="class-pill ${active ? "active" : ""}" onclick="toggleUnlockedClass('${escapeJs(cls.safeName)}')">${escapeHtml(cls.safeName)}</button>`;
+            }).join("")}
+          </div>
+        </div>
+
+        <div style="margin-top:18px">
+          <label>Partynoteringar</label>
+          <textarea onchange="updatePartyField('notes',this.value)">${escapeHtml(p.notes || "")}</textarea>
+        </div>
+      `;
+    }
+
+    function renderSharingPanel() {
+      const root = document.getElementById("sharingPanel");
+      root.innerHTML = `
+        <div class="field-grid-2">
+          <div>
+            <label>Publik länk</label>
+            <input readonly value="${window.location.href}">
+            <div class="help">Det här är länken du skickar till vännerna.</div>
+          </div>
+          <div>
+            <label>Export / import</label>
+            <textarea id="importExportBox" placeholder="Exportera härifrån eller klistra in JSON här för att importera på en annan mobil."></textarea>
+            <div class="btn-row" style="margin-top:10px">
+              <button class="secondary" onclick="fillExportBox()">Fyll med export</button>
+              <button class="secondary" onclick="importFromBox()">Importera</button>
+            </div>
+          </div>
+        </div>
+        <div class="help" style="margin-top:16px">
+          Gratisversionen sparar lokalt i varje webbläsare. Om hela partyt ska dela exakt samma live-data mellan olika mobiler behöver nästa version ha en riktig backend/databas.
+        </div>
+      `;
+    }
+
+    function selectCharacter(id) {
+      state.activeCharacterId = id;
+      saveState("Karaktär vald.");
+      render();
+    }
+
+    function updateCharacterField(id, field, value) {
+      const c = state.characters.find(x => x.id === id);
+      if (!c) return;
+      c[field] = value;
+      saveState("Karaktär uppdaterad.");
+      render();
+    }
+
+    function updateCharacterNumber(id, field, value) {
+      const c = state.characters.find(x => x.id === id);
+      if (!c) return;
+      c[field] = Number(value || 0);
+      touchCharacter(c);
+      saveState("Karaktär uppdaterad.");
+      render();
+    }
+
+    function updateCharacterClass(id, classKey) {
+      const c = state.characters.find(x => x.id === id);
+      if (!c) return;
+      c.classKey = classKey;
+      c.name = getClassTemplate(classKey).safeName;
+      touchCharacter(c);
+      saveState("Klass uppdaterad.");
+      render();
+    }
+
+    function addPerk(id) {
+      const input = document.getElementById("newPerkInput");
+      const text = (input.value || "").trim();
+      if (!text) return;
+      const c = state.characters.find(x => x.id === id);
+      c.perks.push({ id: uid(), text, done: false });
+      input.value = "";
+      saveState("Perk tillagd.");
+      render();
+    }
+
+    function togglePerk(id, perkId, checked) {
+      const c = state.characters.find(x => x.id === id);
+      const p = c.perks.find(x => x.id === perkId);
+      if (!p) return;
+      p.done = checked;
+      saveState("Perk uppdaterad.");
+      render();
+    }
+
+    function removePerk(id, perkId) {
+      const c = state.characters.find(x => x.id === id);
+      c.perks = c.perks.filter(p => p.id !== perkId);
+      saveState("Perk borttagen.");
+      render();
+    }
+
+    function updateItemSlot(id, slot, value) {
+      const c = state.characters.find(x => x.id === id);
+      c.itemSlots[slot] = value;
+      saveState("Item-slot uppdaterad.");
+      render();
+    }
+
+    function updateSmallItemLimit(id, value) {
+      const c = state.characters.find(x => x.id === id);
+      const count = Math.max(1, Number(value || 1));
+      c.smallItemLimit = count;
+      const next = [...(c.itemSlots.small || [])];
+      while (next.length < count) next.push("");
+      c.itemSlots.small = next.slice(0, count);
+      saveState("Small item-slots uppdaterade.");
+      render();
+    }
+
+    function updateSmallItemSlot(id, index, value) {
+      const c = state.characters.find(x => x.id === id);
+      if (!Array.isArray(c.itemSlots.small)) c.itemSlots.small = [""];
+      c.itemSlots.small[index] = value;
+      saveState("Small item uppdaterad.");
+      render();
+    }
+
+    function addInventoryItem(id) {
+      const input = document.getElementById("newInventoryItemInput");
+      const text = (input.value || "").trim();
+      if (!text) return;
+      const c = state.characters.find(x => x.id === id);
+      c.inventory.push({ id: uid(), text });
+      input.value = "";
+      saveState("Item tillagt.");
+      render();
+    }
+
+    function removeInventoryItem(id, itemId) {
+      const c = state.characters.find(x => x.id === id);
+      c.inventory = c.inventory.filter(i => i.id !== itemId);
+      saveState("Item borttaget.");
+      render();
+    }
+
+    function updatePartyField(field, value) {
+      state.party[field] = value;
+      saveState("Party uppdaterat.");
+      render();
+    }
+
+    function updatePartyNumber(field, value) {
+      state.party[field] = Number(value || 0);
+      saveState("Party uppdaterat.");
+      render();
+    }
+
+    function addAchievement(kind) {
+      state.party[kind].push("");
+      saveState("Achievement-rad tillagd.");
+      render();
+    }
+
+    function updateAchievement(kind, index, value) {
+      state.party[kind][index] = value;
+      saveState("Achievement uppdaterad.");
+      render();
+    }
+
+    function removeAchievement(kind, index) {
+      state.party[kind].splice(index, 1);
+      if (!state.party[kind].length) state.party[kind].push("");
+      saveState("Achievement borttagen.");
+      render();
+    }
+
+    function toggleUnlockedClass(name) {
+      const arr = state.party.unlockedClasses;
+      if (arr.includes(name)) {
+        state.party.unlockedClasses = arr.filter(x => x !== name);
+      } else {
+        state.party.unlockedClasses.push(name);
+      }
+      saveState("Unlocked classes uppdaterade.");
+      render();
+    }
+
+    function duplicateCharacter(id) {
+      const c = state.characters.find(x => x.id === id);
+      if (!c) return;
+      const copy = JSON.parse(JSON.stringify(c));
+      copy.id = uid();
+      copy.customName = (copy.customName || copy.name) + " kopia";
+      state.characters.push(copy);
+      state.activeCharacterId = copy.id;
+      saveState("Karaktär duplicerad.");
+      render();
+    }
+
+    function deleteCharacter(id) {
+      if (state.characters.length <= 1) {
+        alert("Du måste ha minst en karaktär kvar.");
+        return;
+      }
+      state.characters = state.characters.filter(c => c.id !== id);
+      state.activeCharacterId = state.characters[0].id;
+      saveState("Karaktär borttagen.");
+      render();
+    }
+
+    function fillExportBox() {
+      const box = document.getElementById("importExportBox");
+      box.value = JSON.stringify(state, null, 2);
+      saveState("Export skapad.");
+    }
+
+    function importFromBox() {
+      const box = document.getElementById("importExportBox");
+      try {
+        const parsed = JSON.parse(box.value);
+        state = parsed;
+        saveState("Import klar.");
+        render();
+      } catch {
+        alert("JSON-importen är inte giltig.");
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function escapeAttr(str) {
+      return escapeHtml(str).replace(/\n/g, "&#10;");
+    }
+
+    function escapeJs(str) {
+      return String(str ?? "").replace(/'/g, "\\'");
+    }
+
+    document.getElementById("btnAddCharacter").addEventListener("click", () => {
+      const playerName = document.getElementById("newPlayerName").value.trim();
+      const classKey = document.getElementById("newCharacterClass").value;
+      const c = createCharacter(classKey, playerName);
+      state.characters.push(c);
+      state.activeCharacterId = c.id;
+      if (playerName) state.filterPlayer = playerName;
+      document.getElementById("newPlayerName").value = "";
+      saveState("Karaktär tillagd.");
+      render();
+    });
+
+    document.getElementById("characterFilter").addEventListener("change", (e) => {
+      state.filterPlayer = e.target.value;
+      saveState("Filter uppdaterat.");
+      render();
+    });
+
+    document.getElementById("btnSaveNow").addEventListener("click", () => {
+      saveState("Sparat manuellt.");
+      render();
+    });
+
+    document.getElementById("btnNewParty").addEventListener("click", () => {
+      if (!confirm("Skapa ett helt nytt party? Nuvarande data ersätts i den här webbläsaren.")) return;
+      state = createDefaultState();
+      saveState("Nytt party skapat.");
+      render();
+    });
+
+    document.getElementById("btnExport").addEventListener("click", fillExportBox);
+    document.getElementById("btnImport").addEventListener("click", importFromBox);
+
+    document.getElementById("btnCopyState").addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(JSON.stringify(state, null, 2));
+        setMessage("Data kopierad till urklipp.");
+      } catch {
+        setMessage("Kunde inte kopiera till urklipp.");
+      }
+    });
+
+    document.getElementById("btnFindPlayer").addEventListener("click", () => {
+      const name = document.getElementById("playerNameFinder").value.trim();
+      if (!name) return;
+      state.filterPlayer = name;
+      const found = state.characters.find(c => (c.playerName || "").trim().toLowerCase() === name.toLowerCase());
+      if (found) state.activeCharacterId = found.id;
+      saveState(found ? "Hoppade till spelarens figur." : "Filtrerade på spelarnamn.");
+      render();
+    });
+
+    document.getElementById("partyCodeInput").addEventListener("change", (e) => {
+      state.meta.partyCode = e.target.value.trim();
+      saveState("Party code uppdaterad.");
+      render();
+    });
+
+    document.querySelectorAll(".tab-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".tab-btn").forEach(x => x.classList.remove("active"));
+        document.querySelectorAll(".tab-panel").forEach(x => x.classList.remove("active"));
+        btn.classList.add("active");
+        document.getElementById("tab-" + btn.dataset.tab).classList.add("active");
+      });
+    });
+
+    window.addEventListener("beforeunload", () => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    });
+
+    render();
+    saveState("Autosave aktiv.");
+  </script>
 </body>
 </html>

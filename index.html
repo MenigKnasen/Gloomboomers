@@ -735,8 +735,11 @@ async function loadFromDatabase(){
 
   if(data && data.data){
     state = data.data;
-    render();
+  } else {
+    await syncToDatabase();
   }
+
+}
 
 }
     function getActiveCharacter() {
@@ -1381,12 +1384,15 @@ async function loadFromDatabase(){
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     });
 
-    render();
-loadFromDatabase();
-saveState("Autosave aktiv.");
+    async function initApp() {
+  await loadFromDatabase();
+  render();
+}
+initApp();
   </script>
 </body>
 </html>
+
 
 
 

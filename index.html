@@ -527,7 +527,7 @@
 
  <script>
 
-const supabase = window.supabase.createClient(
+const sb = window.supabase.createClient(
   window.APP_CONFIG.SUPABASE_URL,
   window.APP_CONFIG.SUPABASE_PUBLISHABLE_KEY
 )
@@ -727,7 +727,7 @@ async function loadFromDatabase(){
 
   if(!state.meta.partyCode) return;
 
-  const { data } = await supabase
+  const { data } = await sb
     .from("party_states")
     .select("data")
     .eq("party_code", state.meta.partyCode)
@@ -1387,5 +1387,6 @@ saveState("Autosave aktiv.");
   </script>
 </body>
 </html>
+
 
 

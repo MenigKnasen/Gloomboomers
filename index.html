@@ -408,6 +408,8 @@
       .btn-row button { flex: 1 1 auto; }
     }
   </style>
+  <script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
   <div class="wrap">
@@ -523,8 +525,14 @@
     </div>
   </div>
 
-  <script>
-    const STORAGE_KEY = "gloomboomers-tracker-v1";
+ <script>
+
+const supabase = window.supabase.createClient(
+  window.APP_CONFIG.SUPABASE_URL,
+  window.APP_CONFIG.SUPABASE_PUBLISHABLE_KEY
+)
+
+const STORAGE_KEY = "gloomboomers-tracker-v1";
 
     const levelXpThresholds = {
       1: 0,
@@ -667,9 +675,20 @@
 
     let state = loadState();
 
+const params = new URLSearchParams(window.location.search);
+const urlParty = params.get("party");
+
+if(urlParty){
+  state.meta.partyCode = urlParty;
+}
+   if(!state.meta.partyCode){
+  state.meta.partyCode = "gloomboomers";
+}
+
     function saveState(message) {
       state.meta.updatedAt = new Date().toISOString();
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      syncToDatabase();
       setMessage(message || "Sparat.");
     }
 
@@ -680,7 +699,22 @@
         document.getElementById("message").textContent = "";
       }, 2400);
     }
+async function loadFromDatabase(){
 
+  if(!state.meta.partyCode) return;
+
+  const { data } = await supabase
+    .from("party_states")
+    .select("data")
+    .eq("party_code", state.meta.partyCode)
+    .maybeSingle();
+
+  if(data && data.data){
+    state = data.data;
+    render();
+  }
+
+}
     function getActiveCharacter() {
       return state.characters.find(c => c.id === state.activeCharacterId) || state.characters[0] || null;
     }
@@ -1324,7 +1358,9 @@
     });
 
     render();
-    saveState("Autosave aktiv.");
+loadFromDatabase();
+saveState("Autosave aktiv.");
   </script>
 </body>
 </html>
+

@@ -673,7 +673,31 @@ const STORAGE_KEY = "gloomboomers-tracker-v1";
       }
     }
 
-    let state = loadState();
+    const loadedState = loadState();
+const defaultState = createDefaultState();
+
+let state = {
+  ...defaultState,
+  ...loadedState,
+  meta: {
+    ...defaultState.meta,
+    ...(loadedState.meta || {})
+  },
+  party: {
+    ...defaultState.party,
+    ...(loadedState.party || {})
+  },
+  characters:
+    Array.isArray(loadedState.characters) && loadedState.characters.length
+      ? loadedState.characters
+      : defaultState.characters,
+  activeCharacterId:
+    loadedState.activeCharacterId ||
+    (Array.isArray(loadedState.characters) && loadedState.characters[0]
+      ? loadedState.characters[0].id
+      : defaultState.activeCharacterId),
+  filterPlayer: loadedState.filterPlayer || "all"
+};
 
 const params = new URLSearchParams(window.location.search);
 const urlParty = params.get("party");
@@ -1363,4 +1387,5 @@ saveState("Autosave aktiv.");
   </script>
 </body>
 </html>
+
 

@@ -723,6 +723,44 @@ if(urlParty){
         document.getElementById("message").textContent = "";
       }, 2400);
     }
+   function setMessage(text) {
+  document.getElementById("message").textContent = text || "";
+  clearTimeout(setMessage._t);
+  setMessage._t = setTimeout(() => {
+    document.getElementById("message").textContent = "";
+  }, 2400);
+}
+
+async function syncToDatabase() {
+
+  if(!state.meta.partyCode) return;
+
+  await sb
+    .from("party_states")
+    .upsert({
+      party_code: state.meta.partyCode,
+      data: state
+    });
+
+}
+
+async function loadFromDatabase(){
+
+  if(!state.meta.partyCode) return;
+
+  const { data } = await sb
+    .from("party_states")
+    .select("data")
+    .eq("party_code", state.meta.partyCode)
+    .maybeSingle();
+
+  if(data && data.data){
+    state = data.data;
+  } else {
+    await syncToDatabase();
+  }
+
+}
 async function loadFromDatabase(){
 
   if(!state.meta.partyCode) return;
@@ -1391,6 +1429,7 @@ initApp();
   </script>
 </body>
 </html>
+
 
 
 
